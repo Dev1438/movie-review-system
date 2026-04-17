@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- 🔥 Mobile responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% block title %}ETERNAL FLICKS {% endblock %}</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #141414;
+      color: white;
+    }
+
+    /* 🎬 NAVBAR */
+    .navbar {
+      background-color: #000 !important;
+    }
+
+    /* 🎬 MOVIE CARDS */
+    .movie-card {
+      background-color: transparent;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* 🔥 FIXED IMAGE ISSUE (FINAL SOLUTION) */
+    .movie-card img {
+      width: 100%;
+      aspect-ratio: 2 / 3;   /* perfect poster ratio */
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    /* Hover effect */
+    .movie-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 12px 25px rgba(0,0,0,0.6);
+    }
+
+    /* 🎬 RECENT MOVIES */
+    .recent-card img {
+      width: 120px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      transition: transform 0.2s ease;
+    }
+
+    .recent-card img:hover {
+      transform: scale(1.05);
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 10px;
+    }
+
+    /* 🎬 HERO SECTION */
+    .movie-hero {
+      position: relative;
+      height: 90vh;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      align-items: center;
+    }
+
+    .movie-hero .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to right,
+        rgba(0,0,0,0.9) 30%,
+        rgba(0,0,0,0.6) 60%,
+        rgba(0,0,0,0.3)
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .detail-poster {
+      width: 100%;
+      max-width: 280px;
+      border-radius: 12px;
+    }
+
+    /* Buttons */
+    .btn-danger {
+      background-color: #e50914;
+      border: none;
+    }
+
+    .btn-danger:hover {
+      background-color: #f40612;
+    }
+
+    /* Responsive hero */
+    @media (max-width: 768px) {
+      .movie-hero {
+        height: auto;
+        padding: 40px 0;
+      }
+    }
+
+    /* 🎬 FORM STYLING */
+    .card {
+      backdrop-filter: blur(10px);
+    }
+
+    input, textarea, select {
+      border-radius: 8px !important;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      box-shadow: 0 0 8px rgba(229,9,20,0.6) !important;
+      border-color: #e50914 !important;
+      background-color: #000 !important;
+      color: white !important;
+    }
+
+    .form-select {
+      background-color: #000 !important;
+      color: white !important;
+      border: 1px solid #444 !important;
+    }
+
+.form-select:focus {
+    border-color: #e50914 !important;
+    box-shadow: 0 0 6px rgba(229,9,20,0.5) !important;
+}
+
+  </style>
+</head>
+
+<body>
+
+<!-- 🔥 NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container">
+
+    <a class="navbar-brand fw-bold" href="{% url 'movies:movie_list' %}">
+      🎬 ETERNAL FLICKS 
+    </a>
+
+    <!-- Mobile toggle -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+
+      <!-- 🔍 Search -->
+      <form class="d-flex gap-2 ms-auto flex-wrap" method="GET" action="{% url 'movies:movie_list' %}">
+
+        <input class="form-control" name="q" placeholder="Search..." value="{{ query }}">
+
+        <select class="form-select" name="genre">
+
+          <!-- 🔥 FIXED -->
+            <option value="" {% if not genre %}selected{% endif %}>
+              All Genres
+            </option>
+
+            {% for val, label in genre_choices %}
+              <option value="{{ val }}" {% if val == genre %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+
+        </select>
+
+        <button class="btn btn-outline-light" type="submit">
+          Search
+        </button>
+
+        <!-- 🔥 Reset -->
+        <a href="{% url 'movies:movie_list' %}" class="btn btn-outline-secondary">
+          Reset
+        </a>
+
+      </form>
+
+    </div>
+  </div>
+</nav>
+
+<!-- 🔥 MAIN CONTENT -->
+<div class="container mt-4">
+  {% block content %}{% endblock %}
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+{% extends 'movies/base.html' %}
+
+{% block content %}
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+
+      <div class="card bg-dark text-light shadow-lg border-0 rounded-4 p-4">
+
+        <h3 class="mb-4 text-center fw-bold">
+          🎬 {{ action }} Movie
+        </h3>
+
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          {% for field in form %}
+            <div class="mb-3">
+
+              <label class="form-label fw-semibold">
+                {{ field.label }}
+              </label>
+
+              {{ field }}
+
+              {% if field.errors %}
+                <div class="text-danger small mt-1">
+                  {{ field.errors }}
+                </div>
+              {% endif %}
+
+            </div>
+          {% endfor %}
+
+          <div class="d-flex justify-content-between mt-4">
+            <button type="submit" class="btn btn-danger px-4">
+              ✔ {{ action }}
+            </button>
+
+            <a href="{% url 'movies:movie_list' %}" 
+               class="btn btn-outline-light px-4">
+              Cancel
+            </a>
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

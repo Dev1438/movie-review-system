@@ -1,0 +1,306 @@
+{% extends 'movies/base.html' %}
+{% block title %}Delete "{{ movie.title }}" — MovieHub{% endblock %}
+
+{% block content %}
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --gold:    #C9A84C;
+    --gold-lt: #E8C84A;
+    --ink:     #0f0f13;
+    --panel:   #16161d;
+    --danger:  #d95252;
+    --danger-lt: #f07070;
+    --border:  rgba(255,255,255,0.06);
+    --muted:   #6b6b7a;
+  }
+
+  .del-page {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 16px;
+  }
+
+  .del-card {
+    background: var(--panel);
+    border: 1px solid rgba(217, 82, 82, 0.2);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 560px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .del-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--danger), #ff8080, var(--danger));
+    background-size: 200% 100%;
+    animation: shimmer 2.5s linear infinite;
+  }
+
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .del-movie-preview {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 28px 32px;
+    background: rgba(0,0,0,0.25);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .del-poster-thumb {
+    width: 64px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+  }
+
+  .del-movie-info {
+    flex: 1;
+  }
+
+  .del-movie-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  .del-movie-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .del-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .del-rating {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .del-content {
+    padding: 32px 32px 28px;
+  }
+
+  .del-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(217,82,82,0.12);
+    border: 1px solid rgba(217,82,82,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .del-icon-wrap svg {
+    width: 26px;
+    height: 26px;
+    stroke: var(--danger-lt);
+  }
+
+  .del-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .del-subtext {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+
+  .del-warning-box {
+    background: rgba(217,82,82,0.07);
+    border: 1px solid rgba(217,82,82,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: #c98080;
+    line-height: 1.6;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .del-warning-icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .del-warning-icon svg {
+    width: 16px;
+    height: 16px;
+    stroke: var(--danger);
+  }
+
+  .del-actions {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn-cancel {
+    flex: 1;
+    padding: 12px 20px;
+    background: transparent;
+    color: #c5c5d5;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.12);
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+    display: block;
+  }
+
+  .btn-cancel:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.22);
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .btn-confirm-delete {
+    flex: 1;
+    padding: 12px 20px;
+    background: var(--danger);
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    text-align: center;
+    letter-spacing: .02em;
+    transition: background .15s, transform .1s;
+  }
+
+  .btn-confirm-delete:hover {
+    background: #bf3f3f;
+    transform: translateY(-1px);
+  }
+
+  .btn-confirm-delete:active {
+    transform: translateY(0);
+  }
+
+  .del-footer-note {
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 20px;
+  }
+
+  .del-footer-note a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  .del-footer-note a:hover { text-decoration: underline; }
+</style>
+
+<div class="del-page">
+
+  <div class="del-card">
+
+    <div class="del-movie-preview">
+      <img src="{{ movie.poster.url }}" alt="{{ movie.title }}" class="del-poster-thumb">
+      <div class="del-movie-info">
+        <div class="del-movie-title">{{ movie.title }}</div>
+        <div class="del-movie-meta">
+          <span class="del-badge">{{ movie.get_genre_display }}</span>
+          <span class="del-rating">&#9733; {{ movie.rating }} / 10</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="del-content">
+
+      <div class="del-icon-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+      </div>
+
+      <h2 class="del-heading">Delete this movie?</h2>
+      <p class="del-subtext">
+        You are about to permanently delete <strong style="color:#e0e0ec;font-weight:500">"{{ movie.title }}"</strong> from MovieHub. This action cannot be undone.
+      </p>
+
+      <div class="del-warning-box">
+        <span class="del-warning-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+            <line x1="12" y1="9" x2="12" y2="13"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </span>
+        <span>The movie record, all metadata, and the uploaded poster image will be permanently removed from the database and server.</span>
+      </div>
+
+      <form method="POST" action="{% url 'movies:movie_delete' movie.pk %}">
+        {% csrf_token %}
+        <div class="del-actions">
+          <a href="{% url 'movies:movie_detail' movie.pk %}" class="btn-cancel">Cancel</a>
+          <button type="submit" class="btn-confirm-delete">Yes, delete permanently</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+  <p class="del-footer-note">
+    Changed your mind?
+    <a href="{% url 'movies:movie_update' movie.pk %}">Edit this movie instead</a>
+  </p>
+
+</div>
+
+{% endblock %}
