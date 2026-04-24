@@ -11,11 +11,38 @@
         <h3 class="mb-4 text-center fw-bold">
           🎬 {{ action }} Movie
         </h3>
+        {% comment %} {% if form.instance.image and form.instance.image.name %}
+          <div class="mb-3 text-center">
+            <img src="{{ form.instance.image.url|default:'' }}" width="120">
+          </div>
+        {% endif %} {% endcomment %}
+        
 
         <form method="POST" enctype="multipart/form-data">
           {% csrf_token %}
-
           {% for field in form %}
+            {% if field.name != "image" %}
+              <div class="mb-3">
+                <label class="form-label fw-semibold">
+                  {{ field.label }}
+                </label>
+
+                {{ field }}
+
+                {% if field.errors %}
+                  <div class="text-danger small mt-1">
+                    {{ field.errors }}
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Image</label>
+            <input type="file" name="image" class="form-control">
+          </div>
+        
+          {% comment %} {% for field in form %}
             <div class="mb-3">
 
               <label class="form-label fw-semibold">
@@ -31,7 +58,7 @@
               {% endif %}
 
             </div>
-          {% endfor %}
+          {% endfor %} {% endcomment %}
 
           <div class="d-flex justify-content-between mt-4">
             <button type="submit" class="btn btn-danger px-4">
