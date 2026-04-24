@@ -22,7 +22,7 @@ class MovieForm(forms.ModelForm):
                 'class': 'form-control bg-black text-light border-secondary',
                 'min': 1, 'max': 10, 'step': 0.1
             }),
-            'poster': forms.FileInput(attrs={
+            'poster': forms.ClearableFileInput(attrs={
                 'class': 'form-control bg-black text-light border-secondary'
             }),
         }
