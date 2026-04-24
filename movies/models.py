@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 # Create your models here.
+from cloudinary.models import CloudinaryField
+
 
 
  
@@ -20,7 +22,7 @@ class Movie(models.Model):
             max_digits=3, decimal_places=1,
             validators=[MinValueValidator(1), MaxValueValidator(10)]
         )
-        poster      = models.ImageField(upload_to='posters/')
+        poster      = CloudinaryField('image')
         created_at  = models.DateTimeField(auto_now_add=True)
 
         def __str__(self):

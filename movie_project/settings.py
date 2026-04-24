@@ -1,16 +1,32 @@
 from pathlib import Path
 import os
 import dj_database_url
+import cloudinary
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY
-SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret-key')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    raise ValueError("SECRET_KEY is missing")
 
-DEBUG = False
+CLOUD_NAME = os.environ.get("CLOUD_NAME")
+API_KEY = os.environ.get("API_KEY")
+API_SECRET = os.environ.get("API_SECRET")
 
-ALLOWED_HOSTS = ["movie-review-system-vrqs.onrender.com"]  # Change later to your domain
+if not all([CLOUD_NAME, API_KEY, API_SECRET]):
+    raise ValueError("Cloudinary env variables missing")
+
+DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+if DEBUG:
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+else:
+    ALLOWED_HOSTS = ["movie-review-system-vrqs.onrender.com"]
 
 # APPLICATIONS
 INSTALLED_APPS = [
@@ -21,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'movies',  # your app
+    'movies',
+    'cloudinary',
+    'cloudinary_storage',
+    
 ]
 
 # MIDDLEWARE
@@ -97,8 +116,21 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # MEDIA FILES
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # DEFAULT PRIMARY KEY
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+cloudinary.config(
+    cloud_name=CLOUD_NAME,
+    api_key=API_KEY,
+    api_secret=API_SECRET
+)
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': CLOUD_NAME,
+    'API_KEY': API_KEY,
+    'API_SECRET': API_SECRET,
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
