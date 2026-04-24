@@ -23,10 +23,11 @@ if not all([CLOUD_NAME, API_KEY, API_SECRET]):
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-if DEBUG:
-    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
-else:
-    ALLOWED_HOSTS = ["movie-review-system-vrqs.onrender.com"]
+ALLOWED_HOSTS = [
+    "127.0.0.1",
+    "localhost",
+    "movie-review-system-vrqs.onrender.com",
+]
 
 # APPLICATIONS
 INSTALLED_APPS = [
