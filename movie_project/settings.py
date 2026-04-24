@@ -8,9 +8,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY
 SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret-key')
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']  # Change later to your domain
+ALLOWED_HOSTS = ["movie-review-system-vrqs.onrender.com"]  # Change later to your domain
 
 # APPLICATIONS
 INSTALLED_APPS = [
