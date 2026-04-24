@@ -64,19 +64,38 @@ def movie_create(request):
 
     return render(request, 'movies/movie_form.html', {'form': form, 'action': 'Create'})  
 
+# def movie_update(request, pk):
+#     movie = get_object_or_404(Movie, pk=pk)
+#     if request.method == 'POST':
+#         form = MovieForm(request.POST, request.FILES, instance=movie)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('movies:movie_detail', pk=movie.pk)
+#     else:
+#         form = MovieForm(instance=movie)  # Pre-populates with existing data
+
+#     return render(request, 'movies/movie_form.html', {'form': form, 'action': 'Update'})
+
 def movie_update(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
+
     if request.method == 'POST':
         form = MovieForm(request.POST, request.FILES, instance=movie)
+
         if form.is_valid():
-            form.save()
+            movie = form.save(commit=False)
+
+            # 🔥 IMPORTANT FIX
+            if request.FILES.get('image'):
+                movie.image = request.FILES['image']
+
+            movie.save()
             return redirect('movies:movie_detail', pk=movie.pk)
-    else:
-        form = MovieForm(instance=movie)  # Pre-populates with existing data
 
-    return render(request, 'movies/movie_form.html', {'form': form, 'action': 'Update'})
+        else:
+            form = MovieForm(instance=movie)
 
-
+        return render(request, 'movies/movie_form.html', {'form': form, 'action': 'Update'})
 def movie_delete(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
     if request.method == 'POST':
