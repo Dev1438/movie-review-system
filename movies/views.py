@@ -83,19 +83,23 @@ def movie_update(request, pk):
         form = MovieForm(request.POST, request.FILES, instance=movie)
 
         if form.is_valid():
-            movie = form.save(commit=False)
-
-            # 🔥 IMPORTANT FIX
-            if request.FILES.get('image'):
-                movie.image = request.FILES['image']
-
-            movie.save()
+            form.save()
             return redirect('movies:movie_detail', pk=movie.pk)
-
         else:
-            form = MovieForm(instance=movie)
+            # 👈 IMPORTANT: return even if form invalid
+            return render(request, 'movies/movie_form.html', {
+                'form': form,
+                'action': 'Update'
+            })
 
-        return render(request, 'movies/movie_form.html', {'form': form, 'action': 'Update'})
+    # 👇 THIS ALWAYS RUNS FOR GET
+    form = MovieForm(instance=movie)
+    return render(request, 'movies/movie_form.html', {
+        'form': form,
+        'action': 'Update'
+    })
+
+
 def movie_delete(request, pk):
     movie = get_object_or_404(Movie, pk=pk)
     if request.method == 'POST':
